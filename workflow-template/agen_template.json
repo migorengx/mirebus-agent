@@ -1,0 +1,564 @@
+{
+    "name": "Agen Mirebusx",
+    "nodes": [
+      {
+        "parameters": {
+          "updates": [
+            "message"
+          ],
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.telegramTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          -300,
+          -260
+        ],
+        "id": "ea0f009a-3ec1-431b-967a-d30c6342dee2",
+        "name": "Telegram Trigger",
+        "webhookId": "ac4f39cb-dbc6-4948-a8fd-cf388d9e4786",
+        "credentials": {
+          "telegramApi": {
+            "id": "acFf6uFtXedsNeVo",
+            "name": "Telegram account 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.message.text }}",
+                      "rightValue": "",
+                      "operator": {
+                        "type": "string",
+                        "operation": "notEmpty",
+                        "singleValue": true
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "text"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "08b02f28-5469-40cb-b82c-f3a82609893c",
+                      "leftValue": "={{ $json.message.voice.file_id }}",
+                      "rightValue": "",
+                      "operator": {
+                        "type": "string",
+                        "operation": "notEmpty",
+                        "singleValue": true
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "voice"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          -60,
+          -240
+        ],
+        "id": "935eb108-9b3c-4f79-b17d-5260d7322de7",
+        "name": "Switch"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "={{ $json.message.text }}",
+          "hasOutputParser": true,
+          "options": {
+            "systemMessage": "You are a helpful assistant. use primary language indonesia, you have an access to twitter/x please search using that and Important to not abuse that twitter/x API. you have an access to SERPAPI to using google search, use it to search new knowledge, and dont abuse that API too. \nImportant: If you have reference please embed link of news. You have an access to GMAIL so you can search through email if needed, I allow you to read and search the message but other than that please ask me first. You have an access to youtube, so you can search whats new video on youtube if needed, and dont abuse it. Never output empty message, just give reason why. "
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.7,
+        "position": [
+          720,
+          -340
+        ],
+        "id": "06c4dada-4169-40b7-a845-b47a8f5da0bb",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {
+          "model": "deepseek-r1-distill-llama-70b",
+          "options": {
+            "maxTokensToSample": 2042
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+        "typeVersion": 1,
+        "position": [
+          600,
+          60
+        ],
+        "id": "101f7c0a-ff54-4d75-b8d5-1ed5d97c6f58",
+        "name": "Groq Chat Model",
+        "credentials": {
+          "groqApi": {
+            "id": "I6nYjNVUJcWBz23F",
+            "name": "Groq account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "search",
+          "searchText": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Search_Term', ``, 'string') }}",
+          "limit": "=5",
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.twitterTool",
+        "typeVersion": 2,
+        "position": [
+          860,
+          320
+        ],
+        "id": "4f1e0fc7-4acf-4bb0-adf0-d490a82399d7",
+        "name": "X",
+        "disabled": true
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+        "typeVersion": 1,
+        "position": [
+          1120,
+          80
+        ],
+        "id": "2d7640aa-d935-4fba-a616-17ee28821328",
+        "name": "SerpAPI",
+        "credentials": {
+          "serpApi": {
+            "id": "M0U24ZZegLWjCQsV",
+            "name": "SerpAPI account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+          "text": "={{ $json.output }}",
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          1120,
+          -320
+        ],
+        "id": "3ce1c39d-3f10-41c3-ba4a-bdca4acb771d",
+        "name": "Telegram",
+        "webhookId": "2357dfb3-a796-4718-86e6-284a072e94a0",
+        "credentials": {
+          "telegramApi": {
+            "id": "acFf6uFtXedsNeVo",
+            "name": "Telegram account 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "getAll",
+          "limit": 10,
+          "filters": {
+            "q": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Search', ``, 'string') }}"
+          }
+        },
+        "type": "n8n-nodes-base.gmailTool",
+        "typeVersion": 2.1,
+        "position": [
+          1000,
+          160
+        ],
+        "id": "1570bce5-d4e3-4314-a2f1-b139f097b592",
+        "name": "Gmail",
+        "webhookId": "ad5567f4-80c3-4204-b9d4-7f6d46f582b1",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "01ydevivH4VrfOcM",
+            "name": "Gmail account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "video",
+          "limit": 10,
+          "filters": {
+            "q": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Query', ``, 'string') }}"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.youTubeTool",
+        "typeVersion": 1,
+        "position": [
+          740,
+          300
+        ],
+        "id": "7bf1b0c1-fa4e-412e-a388-2a29824cce5b",
+        "name": "YouTube",
+        "credentials": {
+          "youTubeOAuth2Api": {
+            "id": "onXV8xmJFIJ5VdJn",
+            "name": "YouTube account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "file",
+          "fileId": "={{ $('Telegram Trigger').item.json.message.voice.file_id }}"
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          -340,
+          100
+        ],
+        "id": "33524d6f-827d-4bea-8d5e-34dd8d965e5c",
+        "name": "Telegram1",
+        "webhookId": "368652ad-3589-4018-9912-0040d45eb18b",
+        "credentials": {
+          "telegramApi": {
+            "id": "acFf6uFtXedsNeVo",
+            "name": "Telegram account 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "=https://api.wit.ai/speech?v=20200513",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpCustomAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "audio/ogg"
+              }
+            ]
+          },
+          "sendBody": true,
+          "contentType": "binaryData",
+          "inputDataFieldName": "data",
+          "options": {
+            "response": {
+              "response": {
+                "fullResponse": true,
+                "responseFormat": "json"
+              }
+            }
+          }
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -160,
+          100
+        ],
+        "id": "01386c16-26a1-4893-9bb8-5fdb5bcb3b03",
+        "name": "HTTP Request",
+        "credentials": {
+          "httpCustomAuth": {
+            "id": "NOQQ7ELhaf5xcQon",
+            "name": "Custom Auth account 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "mode": "raw",
+          "jsonOutput": "={\n  \"message\": {\n    \"text\": \"{{ $json.text }}\"\n  }\n}\n",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          340,
+          100
+        ],
+        "id": "6c4e428e-5abe-4897-8a22-1f9afeabcdfb",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {},
+        "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+        "typeVersion": 1.3,
+        "position": [
+          760,
+          -80
+        ],
+        "id": "5e2be36e-c1f2-4db9-949e-21f8a77430e7",
+        "name": "Window Buffer Memory"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "e1842c9e-459a-4166-a4b5-f5befdf00663",
+                "name": "sessionId",
+                "value": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+                "type": "string"
+              }
+            ]
+          },
+          "includeOtherFields": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          240,
+          -360
+        ],
+        "id": "b3643c4d-9843-4c46-b5e7-803e9eafdc39",
+        "name": "Edit Fields1"
+      },
+      {
+        "parameters": {
+          "driveId": {
+            "__rl": true,
+            "mode": "list",
+            "value": "My Drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "mode": "list",
+            "value": "root",
+            "cachedResultName": "/ (Root folder)"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDriveTool",
+        "typeVersion": 3,
+        "position": [
+          1220,
+          -20
+        ],
+        "id": "27f07247-bf82-4f22-98c5-7cf643a9f560",
+        "name": "Google Drive",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "iFkThtqSi4bG4Bhm",
+            "name": "Google Drive account"
+          }
+        }
+      }
+    ],
+    "pinData": {},
+    "connections": {
+      "Telegram Trigger": {
+        "main": [
+          [
+            {
+              "node": "Switch",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Switch": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Telegram1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AI Agent": {
+        "main": [
+          [
+            {
+              "node": "Telegram",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Groq Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "X": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "SerpAPI": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Gmail": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "YouTube": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Telegram1": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Request": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Window Buffer Memory": {
+        "ai_memory": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_memory",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields1": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Drive": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "active": true,
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "versionId": "b0b64cd6-ccb7-40d5-9a1e-cd0c723f2b6d",
+    "meta": {
+      "instanceId": "3004cdcf85aa716a69e8410f47c0e226b7ae0badf09f85074af96a7d131f15c4"
+    },
+    "id": "95NL0mEh6QBmxhiT",
+    "tags": [
+      {
+        "createdAt": "2025-02-18T13:29:00.524Z",
+        "updatedAt": "2025-02-18T13:29:00.524Z",
+        "id": "lNxSaDLVx8SGnmSt",
+        "name": "ai"
+      }
+    ]
+  }
