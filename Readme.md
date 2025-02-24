@@ -1,4 +1,4 @@
-# YOUR AI AGENT
+# SELFHOST YOUR AI AGENT
 
 ### Prequisite
 - change .env.example to .env
