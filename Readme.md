@@ -1,4 +1,4 @@
-# SELFHOST YOUR AI AGENT 🤖🌐
+# SELFHOST YOUR AI AGENT: MIREBUSX SEED AGENT 🤖🌐
 
 This repository provides a simple way to self-host your own AI agent using Docker and Docker Compose. It's designed for developers who want to quickly spin up their own AI-powered services.
 
