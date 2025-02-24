@@ -1,11 +1,11 @@
-## YOUR AI AGENT
+# YOUR AI AGENT
 
-# Prequisite
+### Prequisite
 - change .env.example to .env
 
-# How to start 
+## How to start 
 - starting docker 
 - docker-compose up -d
 
-# How to shutdown 
+## How to shutdown 
 - docker-compose down
