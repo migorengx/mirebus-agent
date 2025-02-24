@@ -1,0 +1,68 @@
+services:
+
+  postgres:
+    image: postgres:13
+    ports:
+      - "${DB_POSTGRES_PORT}:${DB_POSTGRES_PORT}"
+    volumes: 
+      - n8n_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_POSTGRES_USER} -d ${DB_POSTGRES_DATABASE}"]
+      interval: 5s
+      retries: 5
+    environment:
+      - POSTGRES_USER=${DB_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${DB_POSTGRES_PASSWORD}
+      - POSTGRES_DB=${DB_POSTGRES_DATABASE}
+    networks:
+      - aiagent_default
+
+  n8n: 
+    image: docker.n8n.io/n8nio/n8n
+    restart: unless-stopped
+    ports:
+      - "${N8N_PORT}:${N8N_PORT}"
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./local-files:/files
+    environment: 
+      - N8N_HOST=0.0.0.0  # Replace with your domain:cite[9]
+      - WEBHOOK_URL=${LOOPHOLE_WEBHOOK}  # HTTPS required for Telegram:cite[1]:cite[3]
+      - N8N_PORT=${N8N_PORT}
+      - BASIC_AUTH_ACTIVE=${N8N_BASIC_AUTH_ACTIVE}
+      - BASIC_AUTH_USER=${N8N_BASIC_AUTH_USER}
+      - BASIC_AUTH_PASSWORD=${N8N_BASIC_AUTH_PASSWORD}
+      - GENERIC_TIMEZONE=UTC
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=${DB_POSTGRES_HOST}
+      - DB_POSTGRESDB_PORT=${DB_POSTGRES_PORT}
+      - DB_POSTGRESDB_DATABASE=${DB_POSTGRES_DATABASE}
+      - DB_POSTGRESDB_USER=${DB_POSTGRES_USER}
+      - DB_POSTGRESDB_PASSWORD=${DB_POSTGRES_PASSWORD}
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+    networks:
+      - aiagent_default
+
+  loophole: 
+    image: ekimiadocker/loophole:1.0.0-beta.15
+    restart: on-failure
+    # command: ["http", "${N8N_PORT}"]
+    command: ["http", "${N8N_PORT}", "--hostname", "${LOOPHOLE_DOMAIN}"]
+    volumes:
+      - ~/.loophole/tokens.json:/root/.loophole/tokens.json
+    env_file: 
+      - .env
+    depends_on: 
+      - n8n
+    network_mode: service:n8n # Key change: shares n8n's network
+
+networks:
+  aiagent_default:
+    driver: bridge
+    
+volumes:
+  n8n_postgres_data:
+  n8n_data:
