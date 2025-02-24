@@ -1,4 +1,4 @@
-# SELFHOST YOUR AI AGENT: MIREBUS SEED 🤖🌐
+# SELFHOST YOUR AI AGENT 🤖🌐
 
 This repository provides a simple way to self-host your own AI agent using Docker and Docker Compose. It's designed for developers who want to quickly spin up their own AI-powered services.
 
@@ -6,7 +6,7 @@ This repository provides a simple way to self-host your own AI agent using Docke
 
 ## 🚀 Overview
 
-Easily deploy your AI agent by setting up the necessary Docker containers and environment variables. This guide will walk you through the setup process so you can start interacting with your own AI system.
+Easily deploy your AI agent by setting up the necessary Docker containers and environment variables. After running the containers, you’ll import a template workflow to get your AI agent up and running.
 
 ---
 
@@ -17,6 +17,7 @@ Before you begin, make sure you have the following:
 - Docker installed on your system 🐳
 - Docker Compose installed 🛠️
 - Basic knowledge of Docker and environment variables
+- Access to the `n8n` web interface to import workflows 🌐
 
 ### Setup Environment
 
@@ -41,6 +42,15 @@ To get your AI agent up and running:
     ```
     This will build and start the necessary containers in detached mode.
 
+3. **Access `n8n` Web Interface**:
+    Once the containers are up, you can access the `n8n` web interface at `http://localhost:5678` (or the appropriate address if you customized it).
+
+4. **Import the Template Workflow**:
+    - Download or navigate to the `workflow-template/agent_template.json` file in this repository.
+    - In the `n8n` interface, go to the **Workflow** menu and select **Import**.
+    - Upload the `agent_template.json` file to import the template workflow.
+    - Save and activate the workflow to start using your AI agent.
+
 ---
 
 ## 🛑 How to Shutdown
@@ -59,12 +69,15 @@ This will stop and remove the containers, freeing up resources on your system.
 
 Feel free to customize the `.env` file and the Docker setup to fit your specific needs. You can integrate different AI models, change ports, or add more services.
 
+Additionally, you can modify the imported workflow or create new ones to enhance the functionality of your AI agent.
+
 ---
 
 ## 📚 Resources
 
 - [Docker Documentation](https://docs.docker.com/)
 - [Docker Compose Documentation](https://docs.docker.com/compose/)
+- [n8n Documentation](https://n8n.io/docs/)
 
 ---
 
