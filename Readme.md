@@ -1,3 +1,8 @@
+## YOUR AI AGENT
+
+Prequisite
+- change .env.example to .env
+
 How to start 
 - starting docker 
 - docker-compose up -d
